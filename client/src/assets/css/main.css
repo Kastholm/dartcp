@@ -448,7 +448,7 @@ header{
   text-align: center;
   background-color: rgba(56, 55, 55, 0.571);
   color: #fbfbfb;
-  width: 15em;
+  min-width: 15em;
 }
 .rightPanelBody{
   position: relative;
