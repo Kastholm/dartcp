@@ -38,18 +38,22 @@
       <div class="rightPanelBody">
         <div v-if="gameStarted" class="gameInfo">
           <h2 class="currentPlayer">
-            {{ activePlayer ? activePlayer.name : "" }}
+            Spiller:<br /><b>{{ activePlayer ? activePlayer.name : "" }}</b>
           </h2>
           <h2 class="pointIndicator">
-            {{ activePlayer ? activePlayer.dailyPoints : "" }}
+            Dagens Point:<br /><b>{{
+              activePlayer ? activePlayer.dailyPoints : ""
+            }}</b>
           </h2>
-          <h2 class="pointIndicator">
+          <!-- <h2 class="pointIndicator">
             {{ activePlayer ? activePlayer.yearlyPoints : "" }}
-          </h2>
+          </h2> -->
           <br />
           <h2 class="round">
-            <b>Runde:</b> <br />
-            0
+            <b
+              >Runde: <br />
+              {{ round }}
+            </b>
           </h2>
         </div>
         <div v-else class="gameInfo">
@@ -93,9 +97,12 @@
 </template>
 
 <script setup>
+import winnerImg from "@/assets/img/trophy.gif";
 //Importing sweetalert2
 import Swal from "sweetalert2";
+// importing playerService from composable
 import playerService from "@/composables/playersComposable.js";
+// importing ref, onMounted, watch, computed from vue
 import { ref, onMounted, watch, computed } from "vue";
 
 // ref players array to store players from the server
@@ -121,18 +128,26 @@ const playerClass = (index) => ({
 const activePlayerIndex = ref(-1);
 // Set gameStarted to false by default because the game hasn't started yet
 const gameStarted = ref(false);
+// Set round to 0 by default
+const round = ref(0);
 // When you click on Start game button, set active player to 0 (first player)
 function startGame() {
   // Set the active player to the first player
   activePlayerIndex.value = 0;
   // Set gameStarted to true
   gameStarted.value = true;
+  // set round to 1
+  round.value = 1;
 }
 // When you click on Next player button, set active player to the next player
 function nextPlayer(index) {
   // Set the active player to the next player
   let nextPlayerIndex = (index + 1) % filteredPlayers.value.length;
   let nextPlayer = filteredPlayers.value[nextPlayerIndex];
+  // Increment the round if the active player index is 0
+  if (nextPlayerIndex === 0) {
+    round.value++;
+  }
 
   // Check if the next player has all checkboxes checked
   while (
@@ -195,6 +210,16 @@ function checkScored(index) {
   // Add or remove the 'winPlayer' class based on if all checkboxes are checked
   if (allChecked) {
     playerDiv.classList.add("winPlayer");
+    const playerName = playerDiv.querySelector(".playerName").value;
+    Swal.fire(
+      `<img src='${winnerImg}'><p class='winRespond'><b>Tillykke</b><b><br style='margin: .5em;'> ${playerName}!</b><br><br>i tog $1 pladsen<br><br>efter ${round.value} Runde </p>`,
+      "",
+      ""
+    );
+    celebrate();
+    setTimeout(() => {
+      celebrate();
+    }, "1000");
   } else {
     playerDiv.classList.remove("winPlayer");
   }
@@ -249,5 +274,13 @@ function checkScored(index) {
   text-align: center;
   border: 2px solid white;
   padding: 0.5em;
+}
+
+.gameInfo {
+  padding: 2em 0;
+}
+.gameInfo h2 {
+  margin: 0;
+  margin-bottom: 1.5rem;
 }
 </style>

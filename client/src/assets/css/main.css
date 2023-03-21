@@ -458,12 +458,7 @@ header{
   /* height: 100vh; */
   
 }
-.gameInfo{
-padding: 2em 0;
-}
-.gameInfo h2 {
-  margin: 0;
-}
+
 .highlight{
   color: yellow;
 }
