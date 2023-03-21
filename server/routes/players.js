@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
   await players.insertOne({
     name: req.body.name,
     dailyPoints: req.body.dailyPoints,
-    yearlyPoints: req.body.yearlyPoints
+    yearlyPoints: req.body.yearlyPoints,
   });
   // Send a 201 status code to the client indicating the player was created successfully
   res.status(201).send();

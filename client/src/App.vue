@@ -1,85 +1,62 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+//Importing sweetalert2
+import Swal from 'sweetalert2'
+//Importing ref and onMounted
+import { ref, onMounted } from "vue";
+//Importing the router
+import { RouterLink, RouterView } from "vue-router";
+//Panel for the right side of the dartboard with game info
+import rightPanel from "./components/rightPanel.vue";
+//Panel for numbers to the left of the dartboard
+import numberPanel from "./components/numberPanel.vue";
+//Player table
+import playerTable from "./components/playerTable.vue";
+//Importing playerService
+import playerService from "@/composables/playersComposable.js";
+
+const players = ref([]);
+const loading = ref(true);
+
+// Load players from the server
+onMounted(async () => {
+  try {
+    players.value = await playerService.getPlayers();
+    loading.value = false;
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <main class="dart-body">
+    <!-- When players are loaded -->
+    <section v-if="loading" class="loading-screen">
+      <h2>Loading players...</h2>
+      <div class="spinner"></div>
+    </section>
+    <!-- When players are loading -->
+    <numberPanel />
+    <playerTable />
+  </main>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+@import "@/assets/css/main.css";
+@import "@/assets/css/loadingScreen.css";
+.dart-body {
+  display: flex;
+  flex-wrap: nowrap;
+  transition: 0.2s;
+  padding: 0em;
+  color: #fbfbfb;
+  max-width: 1640px;
 }
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+main {
+  height: 100vh;
+  width: 100vw;
+  background-image: url("@/assets/img/background.jpg");
+  background-size: cover;
+  background-position: center;
 }
 </style>
