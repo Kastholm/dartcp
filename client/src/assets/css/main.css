@@ -136,7 +136,6 @@ button:hover{
 
 .restart {
   background-color: #ff0008;
-  display: none;
 }
 .start, .add, .next{
   transition: .5s;

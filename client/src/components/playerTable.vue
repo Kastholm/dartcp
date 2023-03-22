@@ -55,6 +55,12 @@
               {{ round }}
             </b>
           </h2>
+          <h2 class="round">
+            <b
+              >Spil: <br />
+              {{ gameNumber }}
+            </b>
+          </h2>
         </div>
         <div v-else class="gameInfo">
           <span v-for="(player, index) in players" :key="player._id">
@@ -86,10 +92,10 @@
             <button @click="startGame()" class="start">
               Start Spil<i class="fa-solid fa-arrows-rotate"></i>
             </button>
-            <button class="restart">
-              Genstart Spil<i class="fa-solid fa-arrows-rotate"></i>
-            </button>
           </div>
+          <button @click="restartGame" class="restart">
+            Genstart Spil<i class="fa-solid fa-arrows-rotate"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -130,6 +136,8 @@ const activePlayerIndex = ref(-1);
 const gameStarted = ref(false);
 // Set round to 0 by default
 const round = ref(0);
+// Set Game round
+
 // When you click on Start game button, set active player to 0 (first player)
 function startGame() {
   // Set the active player to the first player
@@ -144,8 +152,9 @@ function nextPlayer(index) {
   // Set the active player to the next player
   let nextPlayerIndex = (index + 1) % filteredPlayers.value.length;
   let nextPlayer = filteredPlayers.value[nextPlayerIndex];
-  // Increment the round if the active player index is 0
-  if (nextPlayerIndex === 0) {
+  // Increment the round if the next player's index is smaller than the current player's index
+  // or if the next player's index is the same as the current player's index
+  if (nextPlayerIndex < index || nextPlayerIndex === index) {
     round.value++;
   }
 
@@ -224,6 +233,49 @@ function checkScored(index) {
     playerDiv.classList.remove("winPlayer");
   }
 }
+// Sets the game number for the game in localStorage().
+const getGameNumber = () => {
+  const gameInfo = JSON.parse(localStorage.getItem("gameInfo"));
+
+  if (gameInfo) {
+    const lastGameTimestamp = new Date(gameInfo.timestamp);
+    const now = new Date();
+    const timeDifference = now - lastGameTimestamp;
+    const oneDay = 24 * 60 * 60 * 1000;
+
+    if (timeDifference > oneDay) {
+      // More than 24 hours have passed, reset the game number
+      setGameNumber(1);
+    } else {
+      return gameInfo.gameNumber;
+    }
+  } else {
+    // No gameInfo found in localStorage, set initial game number
+    setGameNumber(1);
+  }
+};
+
+const setGameNumber = (gameNumber) => {
+  const gameInfo = {
+    gameNumber: gameNumber,
+    timestamp: new Date().toISOString(),
+  };
+  localStorage.setItem("gameInfo", JSON.stringify(gameInfo));
+};
+
+function incrementGameNumber() {
+  const currentGameNumber = getGameNumber();
+  setGameNumber(currentGameNumber + 1);
+}
+
+const restartGame = () => {
+  incrementGameNumber();
+  location.reload();
+};
+
+// Usage:
+const gameNumber = getGameNumber();
+console.log(`Current game number: ${gameNumber}`);
 </script>
 
 <style>
