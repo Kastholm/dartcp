@@ -41,8 +41,42 @@ class playerService {
       }
     });
   }
-}
+  // Function to update dailyPoints for a player
+  static async updateDailyPoints(playerId, pointsToAdd) {
+    try {
+      const response = await axios.put(`${url}/${playerId}/update-points`, {
+        dailyPoints: pointsToAdd,
+      });
+      return response.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
+  // Function to update yearlyPoints based on dailyPoints ranking
+  static async updateYearlyPointsBasedOnRank() {
+    try {
+      await axios.put(`${url}/update-yearly-points`);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Function to update roundsTaken highscore for a player
+  static async updateRoundsTaken(playerId, roundsTaken) {
+    try {
+      const response = await axios.put(
+        `${url}/${playerId}/update-rounds-taken`,
+        {
+          roundsTaken,
+        }
+      );
+      return response.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}
 /* -------------------------------------------------------------------------- */
 /*            Exporting the class so it can be used in other files            */
 /* -------------------------------------------------------------------------- */

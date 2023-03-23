@@ -7,6 +7,7 @@ require("dotenv").config();
 const express = require("express");
 // Loading mongodb to interact with MongoDB database
 const mongodb = require("mongodb");
+const ObjectID = mongodb.ObjectId;
 // Loading router to define and handle routes
 const router = express.Router();
 
@@ -40,9 +41,68 @@ router.post("/", async (req, res) => {
     name: req.body.name,
     dailyPoints: req.body.dailyPoints,
     yearlyPoints: req.body.yearlyPoints,
+    roundsTaken: 0,
   });
   // Send a 201 status code to the client indicating the player was created successfully
   res.status(201).send();
+});
+
+// Update player's dailyPoints
+router.put("/:id/update-points", async (req, res) => {
+  const playerId = req.params.id;
+  const pointsToAdd = req.body.dailyPoints;
+
+  const players = await loadPlayersCollection();
+  await players.updateOne(
+    { _id: new ObjectID(playerId) },
+    { $inc: { dailyPoints: pointsToAdd } }
+  );
+  // Return the updated player data
+  const updatedPlayer = await players.findOne({ _id: new ObjectID(playerId) });
+  res.status(200).send(updatedPlayer);
+});
+// Reset dailyPoints for all players after 24 hours (set in server.js)
+router.put("/reset-daily-points", async (req, res) => {
+  const players = await loadPlayersCollection();
+  await players.updateMany({}, { $set: { dailyPoints: 0 } });
+  res.status(200).send();
+});
+
+// Update yearlyPoints based on dailyPoints ranking
+router.put("/update-yearly-points", async (req, res) => {
+  const players = await loadPlayersCollection();
+  const allPlayers = await players.find({}).toArray();
+
+  // Sort the players based on their daily points in ascending order
+  const sortedPlayers = allPlayers.sort(
+    (a, b) => a.dailyPoints - b.dailyPoints
+  );
+
+  // Iterate through the sorted players and update their yearly points
+  for (let i = 0; i < sortedPlayers.length; i++) {
+    const playerId = sortedPlayers[i]._id;
+    const pointsToAdd = i + 1; // The player's rank is their index in the sorted array plus 1
+    await players.updateOne(
+      { _id: new ObjectID(playerId) },
+      { $inc: { yearlyPoints: pointsToAdd } }
+    );
+  }
+
+  res.status(200).send();
+});
+
+// Update roundsTaken for a player
+router.put("/:id/update-rounds-taken", async (req, res) => {
+  const players = await loadPlayersCollection();
+  const playerId = new mongodb.ObjectId(req.params.id);
+  const roundsTaken = req.body.roundsTaken;
+
+  await players.updateOne(
+    { _id: playerId },
+    { $set: { roundsTaken: roundsTaken } }
+  );
+
+  res.status(200).send(await players.findOne({ _id: playerId }));
 });
 
 /* -------------------------------------------------------------------------- */

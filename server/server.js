@@ -11,6 +11,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 // Creating an Express app
 const app = express();
+// Loading node-cron for scheduling tasks
+const cron = require("node-cron");
 
 /* -------------------------------------------------------------------------- */
 /*                 Running middleware for body parser and CORS                */
@@ -37,6 +39,18 @@ app.use(
 const players = require("./routes/players");
 // Mounting the Players routes at "/players" path
 app.use("/players", players);
+
+/* -------------------------------------------------------------------------- */
+/*                Schedule the daily reset at midnight (04:00)                */
+/* -------------------------------------------------------------------------- */
+cron.schedule("0 0 * * *", async () => {
+  try {
+    await axios.put("http://localhost:3000/players/reset-daily-points");
+    console.log("Daily points reset successfully");
+  } catch (error) {
+    console.error("Error resetting daily points:", error);
+  }
+});
 
 /* -------------------------------------------------------------------------- */
 /*                    Setting port for the server to run on                   */

@@ -1,0 +1,28 @@
+
+.swal2-popup{
+     background-color: rgb(31 30 30) !important;
+     color: #fbfbfb !important;
+   }
+   .swal2-confirm{
+        background-color: #d71f0f !important;
+     background: #d71f0f;
+     margin: auto 10px;
+}
+.swal2-deny{
+     background-color: #17db10 !important;
+}
+.swal2-cancel {
+     background: #17db10 !important;
+     background-color: #17db10 !important;
+     border-color: #17db10;
+     color: #fff;
+}
+
+.highScores {
+     font-size: 1.4rem;
+     background: black;
+     text-align: center;
+   }
+   .highPlayer {
+     background: red;
+   }
