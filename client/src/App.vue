@@ -7,12 +7,11 @@ import { RouterLink, RouterView } from "vue-router";
 
 <template>
   <main class="dart-body">
-    <router-view></router-view>
-      <!-- v-slot="{ Component }" den her skal ind i <roter-view> -->
-      <!-- <keep-alive>
+    <router-view v-slot="{ Component }">
+      <keep-alive>
         <component :is="Component" />
-      </keep-alive> -->
-    
+      </keep-alive>
+    </router-view>
     <!-- When players are loaded -->
     <!--  <section v-if="loading" class="loading-screen">
       <h2>Indlæser spil...</h2>

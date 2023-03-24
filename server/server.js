@@ -39,6 +39,10 @@ app.use(
 const players = require("./routes/players");
 // Mounting the Players routes at "/players" path
 app.use("/players", players);
+// Importing Players routes from the "routes/players" module
+const history = require("./routes/history");
+// Mounting the Players routes at "/players" path
+app.use("/history", history);
 
 /* -------------------------------------------------------------------------- */
 /*                Schedule the daily reset at midnight (04:00)                */
