@@ -139,12 +139,16 @@
 import winnerImg from "@/assets/img/trophy.gif";
 //Importing sweetalert2
 import Swal from "sweetalert2";
+// importing historyService from composable
+import historyService from "@/composables/historyComposable.js";
 // importing playerService from composable
 import playerService from "@/composables/playersComposable.js";
 // importing ref, onMounted, watch, computed from vue
 import { ref, onMounted, watch, computed } from "vue";
 // ref players array to store players from the server
 const players = ref([]);
+// Game data that should be added to histry log
+let allGameData = [];
 // Mount players from the server
 onMounted(async () => {
   // Getting players from the server
@@ -293,6 +297,23 @@ function checkScored(index) {
       .catch((error) => {
         console.error(error);
       });
+
+  
+
+     // Add game data to the history database
+    const gameData = {
+      name: playerName,
+      gameRounds: [
+        {
+          gameRound: getGameNumber(), // Retrieve the current game round using getGameNumber()
+          dartRounds: round.value, // Use the 'round' value for dartRounds
+          placement: completedPlayers, // Use the 'completedPlayers' value for placement
+        },
+      ],
+    };
+    historyService.addHistory(gameData).catch((error) => {
+      console.error(error);
+    });
     Swal.fire(
       `<img src='${winnerImg}'><p class='winRespond'><b>Tillykke</b><b><br style='margin: .5em;'> ${playerName}!</b><br><br>du tog ${completedPlayers} pladsen<br><br>efter ${round.value} Runde </p>`,
       "",
@@ -402,6 +423,7 @@ const endGame = async () => {
         const updatedPlayers = await playerService.getPlayers();
         // Update the local players array
         players.value = updatedPlayers;
+
         Swal.fire({
           position: "middle",
           icon: "success",

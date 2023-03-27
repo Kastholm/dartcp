@@ -40,6 +40,7 @@ router.post("/", async (req, res) => {
     return {
       gameRound: gameRound.gameRound,
       dartRounds: gameRound.dartRounds,
+      placement: gameRound.placement,
     };
   });
 
