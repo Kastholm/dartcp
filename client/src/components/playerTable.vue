@@ -298,9 +298,7 @@ function checkScored(index) {
         console.error(error);
       });
 
-  
-
-     // Add game data to the history database
+    // Add game data to the history database
     const gameData = {
       name: playerName,
       gameRounds: [

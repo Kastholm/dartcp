@@ -1,28 +1,76 @@
-
-.swal2-popup{
-     background-color: rgb(31 30 30) !important;
-     color: #fbfbfb !important;
-   }
-   .swal2-confirm{
-        background-color: #d71f0f !important;
-     background: #d71f0f;
-     margin: auto 10px;
+.swal2-popup {
+  background-color: rgb(31 30 30) !important;
+  color: #fbfbfb !important;
 }
-.swal2-deny{
-     background-color: #17db10 !important;
+.swal2-confirm {
+  background-color: #d71f0f !important;
+  background: #d71f0f;
+  margin: auto 10px;
+}
+.swal2-deny {
+  background-color: #17db10 !important;
 }
 .swal2-cancel {
-     background: #17db10 !important;
-     background-color: #17db10 !important;
-     border-color: #17db10;
-     color: #fff;
+  background: #17db10 !important;
+  background-color: #17db10 !important;
+  border-color: #17db10;
+  color: #fff;
 }
 
 .highScores {
-     font-size: 1.4rem;
-     background: black;
-     text-align: center;
-   }
-   .highPlayer {
-     background: red;
-   }
+  font-size: 1.4rem;
+  background: black;
+  text-align: center;
+}
+.highPlayer {
+  background: red;
+}
+
+.gamesBody {
+     position: fixed;
+     z-index: 99;
+     display: grid;
+     place-content: center;
+     grid-template-columns: auto auto auto auto auto;
+     gap: 0;
+     background-color: rgba(5, 5, 5, 0.85);
+     inset: 0;
+}
+
+.firstPlace {
+  background: #c3d313;
+  color: #000000;
+}
+.secondPlace {
+  background: #13d313;
+  color: #000000;
+}
+.thirdPlace {
+  background: #13d3d3;
+  color: #000000;
+}
+.fourthPlace {
+  background: #1313d3;
+  color: #e4e4e4;
+}
+.fifthPlace {
+  background: #000000;
+  color: #e4e4e4;
+}
+.defaultPlace {
+  display: flex;
+  justify-content: center;
+  width: 13em;
+  margin: .5em .2em;
+  text-align: center;
+}
+.defaultPlace h3 {
+     padding: .1em;
+     width: 33%;
+}
+
+.closeGameLog {
+     position: fixed;
+     top: 2em;
+     left: 31em;
+}

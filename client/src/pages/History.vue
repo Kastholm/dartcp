@@ -12,46 +12,50 @@
       </div>
     </div>
 
-    <router-link to="/"><h1>klik</h1></router-link>
-
-    <!-- <div style="text-align: center">
-      <h2>Game History</h2>
-      <div v-for="(games, date) in groupedByDate">
-        <h1>{{ date }}</h1>
-        <div v-for="(game, index) in games" :key="index">
-          <h2>{{ game.name }}</h2>
-          <div
-            style="
-              background: red;
-              display: grid;
-              grid-template-columns: 1fr 1fr 1fr;
-              grid-gap: 10px;
-            "
-            v-for="(gameRound, roundIndex) in game.gameRounds"
-            :key="roundIndex"
-          >
-            <h3>Game {{ gameRound.gameRound }}</h3>
-            <div style="background: green; padding: 3em">
-              <h3>Navn {{ game.name }}</h3>
-              <h3>Runder brugt {{ gameRound.dartRounds }}</h3>
-              <h3>Plads {{ gameRound.placement }}</h3>
+    <div v-for="(group, date) in groupedByDate" :key="date">
+      <button @click="toggleGames(date)">{{ date }}</button>
+      <div class="gamesBody" v-show="visibleGames[date]">
+        <button class="closeGameLog" @click="toggleGames(date)">Close</button>
+        <div
+          style="height: fit-content"
+          v-for="(gameRounds, gameIndex) in group"
+          :key="gameIndex"
+        >
+          <div class="gameRow" style="display: flex">
+            <div
+              v-for="([player, gameRound], playerIndex) in gameRounds"
+              :key="playerIndex"
+            >
+              <h3>Spil nr: {{ gameRound.gameRound }}</h3>
+              <div
+                class="defaultPlace"
+                :class="{
+                  firstPlace: gameRound.placement === 1,
+                  secondPlace: gameRound.placement === 2,
+                  thirdPlace: gameRound.placement === 3,
+                  fourthPlace: gameRound.placement === 4,
+                  fifthPlace: gameRound.placement === 5,
+                }"
+              >
+                <h3>
+                  Navn <br /><b>{{ player }}</b>
+                </h3>
+                <h3>
+                  Runder <br /><b>{{ gameRound.dartRounds }}</b>
+                </h3>
+                <h3>
+                  Plads <br /><b>{{ gameRound.placement }}</b>
+                </h3>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div> -->
-    <div v-for="(group, date) in groupedByDate" :key="date">
-      <h1>{{ date }}</h1>
-      <div v-for="(gameRounds, player) in group" :key="player">
-        <h2>{{ player }}</h2>
-        <div v-for="(gameRound, roundIndex) in gameRounds" :key="roundIndex">
-          <h3>Game {{ gameRound.gameRound }}</h3>
-          <div style="background: green; padding: 3em">
-            <h3>Navn {{ player.name }}</h3>
-            <h3>Runder brugt {{ gameRound.dartRounds }}</h3>
-            <h3>Plads {{ gameRound.placement }}</h3>
-          </div>
-        </div>
+    </div>
+    <!-- RightPanel -->
+    <div class="rightPanel">
+      <div class="rightPanelBody">
+        <router-link to="/"><button>klik</button></router-link>
       </div>
     </div>
   </div>
@@ -61,7 +65,7 @@
 import historyService from "@/composables/historyComposable.js";
 import playerService from "@/composables/playersComposable.js";
 // importing ref, onMounted, watch, computed from vue
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, reactive, computed } from "vue";
 const players = ref([]);
 const history = ref([]);
 // Mount players from the server
@@ -81,18 +85,32 @@ const groupedByDate = computed(() => {
   history.value.forEach((game) => {
     const dateKey = game.gameDate.toISOString().split("T")[0];
     if (!grouped[dateKey]) {
-      grouped[dateKey] = {};
+      grouped[dateKey] = [];
     }
+
+    const gameRoundsByPlayer = {};
     game.gameRounds.forEach((gameRound) => {
-      const playerName = gameRound.name;
-      if (!grouped[dateKey][playerName]) {
-        grouped[dateKey][playerName] = [];
-      }
-      grouped[dateKey][playerName].push(gameRound);
+      const player = game.name;
+      gameRoundsByPlayer[player] = gameRound;
     });
+
+    const sortedPlayers = Object.entries(gameRoundsByPlayer).sort(
+      ([, gameRoundA], [, gameRoundB]) => {
+        return gameRoundA.placement - gameRoundB.placement;
+      }
+    );
+
+    grouped[dateKey].push(sortedPlayers);
   });
+
   return grouped;
 });
+
+const visibleGames = reactive({});
+
+const toggleGames = (date) => {
+  visibleGames[date] = !visibleGames[date];
+};
 </script>
 
 <style>
