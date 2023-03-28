@@ -26,3 +26,33 @@
    .highPlayer {
      background: red;
    }
+
+   .firstPlace {
+     background: #c3d313;
+     color: #000000;
+     
+   }
+   .secondPlace {
+     background: #13d313;
+     color: #000000;
+     
+   }
+     .thirdPlace {
+       background: #13d3d3;
+       color: #000000;
+       
+     }
+     .fourthPlace {
+       background: #1313d3;
+       color: #e4e4e4;
+       
+     }
+   .fifthPlace {
+     background: #000000;
+     color: #e4e4e4;
+     
+   }
+   .defaultPlace {
+     display: flex;
+     text-align: center;
+   }

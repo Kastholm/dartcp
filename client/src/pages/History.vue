@@ -42,14 +42,28 @@
     </div> -->
     <div v-for="(group, date) in groupedByDate" :key="date">
       <h1>{{ date }}</h1>
-      <div v-for="(gameRounds, player) in group" :key="player">
-        <h2>{{ player }}</h2>
-        <div v-for="(gameRound, roundIndex) in gameRounds" :key="roundIndex">
-          <h3>Game {{ gameRound.gameRound }}</h3>
-          <div style="background: green; padding: 3em">
-            <h3>Navn {{ player.name }}</h3>
-            <h3>Runder brugt {{ gameRound.dartRounds }}</h3>
-            <h3>Plads {{ gameRound.placement }}</h3>
+      <div>
+        <div
+          v-for="(gameRounds, player) in group"
+          :key="player"
+          style="display: flex"
+        >
+          <div v-for="(gameRound, roundIndex) in gameRounds" :key="roundIndex">
+            <h3>Game {{ gameRound.gameRound }}</h3>
+            <div
+              class="defaultPlace"
+              :class="{
+                firstPlace: gameRound.placement === 1,
+                secondPlace: gameRound.placement === 2,
+                thirdPlace: gameRound.placement === 3,
+                fourthPlace: gameRound.placement === 4,
+                fifthPlace: gameRound.placement === 5,
+              }"
+            >
+              <h3>Navn <br />{{ player }}</h3>
+              <h3>Runder brugt <br />{{ gameRound.dartRounds }}</h3>
+              <h3>Plads <br />{{ gameRound.placement }}</h3>
+            </div>
           </div>
         </div>
       </div>
@@ -84,11 +98,11 @@ const groupedByDate = computed(() => {
       grouped[dateKey] = {};
     }
     game.gameRounds.forEach((gameRound) => {
-      const playerName = gameRound.name;
-      if (!grouped[dateKey][playerName]) {
-        grouped[dateKey][playerName] = [];
+      const player = game.name;
+      if (!grouped[dateKey][player]) {
+        grouped[dateKey][player] = [];
       }
-      grouped[dateKey][playerName].push(gameRound);
+      grouped[dateKey][player].push(gameRound);
     });
   });
   return grouped;
