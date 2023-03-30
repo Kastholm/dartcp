@@ -60,9 +60,15 @@
                 fifthPlace: gameRound.placement === 5,
               }"
             >
-              <h3>Navn <br />{{ player }}</h3>
-              <h3>Runder brugt <br />{{ gameRound.dartRounds }}</h3>
-              <h3>Plads <br />{{ gameRound.placement }}</h3>
+              <h3>
+                Navn <br /><b>{{ player }}</b>
+              </h3>
+              <h3>
+                Runder brugt <br /><b>{{ gameRound.dartRounds }}</b>
+              </h3>
+              <h3>
+                Plads <br /><b>{{ gameRound.placement }}</b>
+              </h3>
             </div>
           </div>
         </div>
@@ -95,7 +101,7 @@ const groupedByDate = computed(() => {
   history.value.forEach((game) => {
     const dateKey = game.gameDate.toISOString().split("T")[0];
     if (!grouped[dateKey]) {
-      grouped[dateKey] = {};
+      grouped[dateKey] = {};j
     }
     game.gameRounds.forEach((gameRound) => {
       const player = game.name;
