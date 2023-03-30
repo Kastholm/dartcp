@@ -19,22 +19,34 @@
 
 .highScores {
   font-size: 1.4rem;
+  width: 14em;
+  padding: 0 .5em;
   background: black;
   text-align: center;
 }
+.highScores h2 {
+margin: .4em 0;
+}
 .highPlayer {
-  background: red;
+  background: rgb(23, 21, 21);
 }
 
 .gamesBody {
      position: fixed;
      z-index: 99;
+     padding-top: 7em;
      display: grid;
      place-content: center;
-     grid-template-columns: auto auto auto auto auto;
+     grid-template-columns: auto auto auto auto auto ;
+     overflow: scroll;
      gap: 0;
      background-color: rgba(5, 5, 5, 0.85);
      inset: 0;
+}
+.logBody {
+     display: grid;
+     grid-template-columns: auto auto auto auto ;
+     gap: 2em;
 }
 
 .firstPlace {
@@ -60,17 +72,76 @@
 .defaultPlace {
   display: flex;
   justify-content: center;
-  width: 13em;
+  width: 16em;
   margin: .5em .2em;
   text-align: center;
 }
 .defaultPlace h3 {
-     padding: .1em;
+     padding: 1em .8em;
+     margin: 0;
      width: 33%;
 }
+.defaultPlace h3:nth-child(3) {
+     background: #b91717;
+     
+}
+.defaultPlace b {
+     font-size: 2.2rem;
+     color: #fbfbfb;
+}
 
-.closeGameLog {
-     position: fixed;
-     top: 2em;
-     left: 31em;
+.topInfoFixed {
+  position: fixed;
+  background: #000000ba;
+  top: 0;
+  width: 100vw;
+}
+
+.topInfoFixed h1 {
+  margin-left: 2em;
+}
+
+.topInfoFixed button {
+  position: absolute;
+  right: 5%;
+  top: 17%;
+}
+
+.gameLogsBody {
+ display: grid;
+ position: relative;
+ grid-template-columns: auto auto;
+ gap: 2em;
+ padding: 7.3em 2em 2em 2em;
+ background: #000000a0;
+}
+
+.gameLogs {
+  position: relative;
+}
+.gameLogsBody::before {
+  position: absolute;
+content:"Se tidligere spil";
+top: 0;
+left: 21%;
+margin: .6em 0;
+font-size: 2.7rem;
+}
+
+.gameReturn {
+  position: fixed;
+  font-size: 1.6rem;
+  background: #dc700b;
+  color: #fbfbfb;
+  bottom: 0;
+  left: 37%;
+  width: 20em;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.rpHistory {
+  display: grid;
+  grid-template-columns: auto auto;
+  width: 30em;
 }

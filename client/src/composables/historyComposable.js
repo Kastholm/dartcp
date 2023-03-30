@@ -30,6 +30,7 @@ class historyService {
       }));
     } catch (err) {
       console.error(err);
+      gameLogsBody;
       return [];
     }
   }

@@ -136,6 +136,8 @@
 </template>
 
 <script setup>
+import rightPanel from "@/components/rightPanel.vue";
+
 import winnerImg from "@/assets/img/trophy.gif";
 //Importing sweetalert2
 import Swal from "sweetalert2";
@@ -162,6 +164,7 @@ watch(players, () => {
     (a, b) => b.dailyPoints - a.dailyPoints
   );
 });
+
 // Start game function
 // Connecting the active player to the player table
 const playerClass = (index) => ({
@@ -298,9 +301,7 @@ function checkScored(index) {
         console.error(error);
       });
 
-  
-
-     // Add game data to the history database
+    // Add game data to the history database
     const gameData = {
       name: playerName,
       gameRounds: [
@@ -442,6 +443,11 @@ function openMenu() {
 function closeMenu() {
   document.querySelector(".menu").classList.remove("active");
 }
+
+// Define the variables and functions to expose
+defineExpose({
+  filteredPlayers,
+});
 </script>
 
 <style>
