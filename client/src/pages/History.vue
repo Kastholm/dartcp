@@ -1,3 +1,13 @@
+<!-- <div
+          class="highPlayer"
+          v-for="(player, index) in sortedPlayers"
+          :key="index"
+        >
+          <h2>
+            <b>{{ player.name }}</b>
+          </h2>
+          <h2>Runder: {{ player.roundsTaken }}</h2>
+        </div> -->
 <template>
   <div>
     <!-- When players are loaded -->
@@ -10,13 +20,25 @@
         <h1>Highscore</h1>
         <div
           class="highPlayer"
-          v-for="(player, index) in sortedPlayers"
+          v-for="(game, index) in sortedHighScores"
           :key="index"
         >
-          <h2>
-            <b>{{ player.name }}</b>
+          <h2 class="highscorePlacement">
+            {{ index + 1 }}
           </h2>
-          <h2>Runder: {{ player.roundsTaken }}</h2>
+          <h2>
+            <b>{{ game.name }}</b>
+          </h2>
+          <div>
+            <div v-for="round in game.gameRounds" :key="round.gameRound">
+              <span>Runder: {{ round.dartRounds }}</span>
+              <span
+                v-for="(player, playerIndex) in round.dartRounds"
+                :key="playerIndex"
+                >{{ player.player }}</span
+              >
+            </div>
+          </div>
         </div>
       </div>
 
@@ -204,6 +226,24 @@ onMounted(async () => {
   } catch (error) {
     console.error(error);
   }
+});
+
+const sortedHighScores = computed(() => {
+  // Create a new array to avoid mutating the original one
+  const historyCopy = history.value.slice();
+
+  // Sort the history array based on the lowest dartRounds value for each player
+  historyCopy.sort((a, b) => {
+    const aLowestDartRounds = Math.min(
+      ...a.gameRounds.map((round) => round.dartRounds)
+    );
+    const bLowestDartRounds = Math.min(
+      ...b.gameRounds.map((round) => round.dartRounds)
+    );
+    return aLowestDartRounds - bLowestDartRounds;
+  });
+
+  return historyCopy;
 });
 </script>
 

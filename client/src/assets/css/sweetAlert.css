@@ -24,11 +24,30 @@
   background: black;
   text-align: center;
 }
+.highScores :nth-child(n+9) {
+  display: none;
+background-color: red !important;
+}
 .highScores h2 {
 margin: .4em 0;
 }
 .highPlayer {
   background: rgb(23, 21, 21);
+  position: relative;
+}
+.highscorePlacement {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2em;
+  
+  background: #dae907;
+  color: #0c0c0c;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .gamesBody {
