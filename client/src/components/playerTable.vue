@@ -30,7 +30,10 @@
             @change="checkScored(index, boxes)"
           />
         </span>
-        <button class="next" @click="nextPlayer(index)">Næste spiller</button>
+        <div style="display: grid">
+          <button class="next" @click="nextPlayer(index)">Næste spiller</button>
+          <button class="next checkAll" @click="checkAll()">check all</button>
+        </div>
       </div>
     </div>
     <!-- RightPanel -->
@@ -241,7 +244,7 @@ const activePlayer = computed(() => {
 // Sets the number of completed players to 0 by default
 let completedPlayers = 0;
 console.log("default placement", completedPlayers);
-function checkScored(index) {
+function checkScored(index, finishOthers = true) {
   const playerDiv = document.querySelector(
     `.player:nth-child(${activePlayerIndex.value + 1})`
   );
@@ -271,14 +274,14 @@ function checkScored(index) {
     playerDiv.classList.add("winPlayer");
     const playerName = playerDiv.querySelector(".playerName").value;
     // Increment the number of completed players (placement)
-    completedPlayers++;
+    completedPlayers ++;
+    console.log("increased placement", completedPlayers);
     // Adding <p>  to the player div with the placement number
     const placement = completedPlayers;
     const placementElement = document.createElement("p");
     placementElement.classList.add("placement");
     placementElement.innerHTML = `<b style='color:rgb(241, 232, 60);'>${placement}</b><br>Plads`;
     playerDiv.appendChild(placementElement);
-    console.log("increased placement", completedPlayers);
     const pointsToAdd = completedPlayers;
     playerService
       .updateDailyPoints(players.value[index]._id, pointsToAdd)
@@ -315,11 +318,17 @@ function checkScored(index) {
     historyService.addHistory(gameData).catch((error) => {
       console.error(error);
     });
-    Swal.fire(
+    if (finishOthers) {
+      // When a player completes the game, finish the remaining players
+      // This stops the function when all players have finished
+      finishRemainingPlayers(playerDiv);
+    }
+
+    /* Swal.fire(
       `<img src='${winnerImg}'><p class='winRespond'><b>Tillykke</b><b><br style='margin: .5em;'> ${playerName}!</b><br><br>du tog ${completedPlayers} pladsen<br><br>efter ${round.value} Runde </p>`,
       "",
       ""
-    );
+    ); */
     /* celebrate();
     setTimeout(() => {
       celebrate();
@@ -329,6 +338,43 @@ function checkScored(index) {
   }
   // Update the dailyPoints displayed in the player table
 }
+
+function finishRemainingPlayers(completedPlayerDiv) {
+  // Get all players, excluding the completed player
+  const remainingPlayers = Array.from(
+    document.querySelectorAll(".player")
+  ).filter((playerDiv) => playerDiv !== completedPlayerDiv);
+
+  // Sort the remaining players by the number of checked checkboxes
+  remainingPlayers.sort((a, b) => {
+    const checkedA = a.querySelectorAll("input[type=checkbox]:checked").length;
+    const checkedB = b.querySelectorAll("input[type=checkbox]:checked").length;
+    return checkedB - checkedA;
+  });
+
+  // Finish remaining players by giving them placements
+  remainingPlayers.forEach((playerDiv) => {
+    checkAllCheckFieldsForPlayer(playerDiv);
+
+    // Find the player's index in the players array
+    const playerName = playerDiv.querySelector(".playerName").value;
+    const playerIndex = players.value.findIndex(
+      (player) => player.name === playerName
+    );
+    console.log("playerIndex", playerIndex);
+    console.log("players", players.value);
+    console.log("playerName", playerName);
+    // Call checkScored for the player to give them a placement, and set finishOthers to false
+    checkScored(playerIndex, false);
+    console.log(` ja bitteschon ${completedPlayers}`);
+    const placement = completedPlayers;
+    const placementElement = document.createElement("p");
+    placementElement.classList.add("placement");
+    placementElement.innerHTML = `<b style='color:rgb(241, 232, 60);'>${placement}</b><br>Plads`;
+    playerDiv.appendChild(placementElement);
+  });
+}
+
 // Sets the game number for the game in localStorage().
 const getGameNumber = () => {
   const gameInfo = JSON.parse(localStorage.getItem("gameInfo"));
@@ -448,6 +494,35 @@ function closeMenu() {
 defineExpose({
   filteredPlayers,
 });
+
+const getActivePlayerIndex = () => {
+  const activePlayerDiv = document.querySelector(".activePlayer");
+  const allPlayerDivs = Array.from(document.querySelectorAll(".player"));
+  return allPlayerDivs.indexOf(activePlayerDiv);
+};
+const checkAll = () => {
+  console.log("checkAll function called");
+  const activePlayerDiv = document.querySelector(".activePlayer");
+  console.log("activePlayerDiv:", activePlayerDiv);
+  if (activePlayerDiv) {
+    const activePlayerIndex = getActivePlayerIndex();
+    checkAllCheckFieldsForPlayer(activePlayerDiv);
+    checkScored(activePlayerIndex);
+    document.querySelector(".activePlayer .checkAll").remove();
+    /* nextPlayer(activePlayerIndex); */
+  } else {
+    console.log("No active player found");
+  }
+};
+
+const checkAllCheckFieldsForPlayer = (playerDiv) => {
+  console.log("checkAllCheckFieldsForPlayer called for:", playerDiv);
+  const checkboxes = playerDiv.querySelectorAll(".check input");
+  console.log("checkboxes:", checkboxes);
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = true;
+  });
+};
 </script>
 
 <style>
