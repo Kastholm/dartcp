@@ -226,7 +226,7 @@ function nextPlayer(index) {
   Swal.fire({
     position: "middle",
     icon: "success",
-    title: `<h1 style='margin-bottom: .8em; font-size: 2.3rem;'>${nextPlayer.name}'s turn</h1><br><b style='font-size: 4rem;'></b>`,
+    title: `<h1 style='margin-bottom: .8em; font-size: 2.3rem;'>${nextPlayer.name}'s tur</h1><br><b style='font-size: 4rem;'></b>`,
     showConfirmButton: false,
     timer: 2000,
   });
@@ -243,7 +243,6 @@ const activePlayer = computed(() => {
 // Add a class to the scoretable span when all checkboxes are checked
 // Sets the number of completed players to 0 by default
 let completedPlayers = 0;
-let placementCounter = 1;
 console.log("default placement", completedPlayers);
 function checkScored(index, finishOthers = true) {
   const playerDiv = document.querySelector(
@@ -273,16 +272,14 @@ function checkScored(index, finishOthers = true) {
   // Add or remove the 'winPlayer' class based on if all checkboxes are checked
   //playerDiv.classList.remove("activePlayer");
   if (allChecked) {
+    playerDiv.classList.add("winPlayer");
     const playerName = playerDiv.querySelector(".playerName").value;
     // Increment the number of completed players (placement)
     console.log("increased placement", completedPlayers);
-    // Adding <p>  to the player div with the placement number
     completedPlayers++;
-    console.log("place1", placementCounter);
-    if (placementCounter === 1) {
-      console.log("place1Activate", placementCounter);
-      playerDiv.classList.add("winPlayer");
-      const placement = placementCounter;
+    // Adding <p>  to the player div with the placement number
+    if (completedPlayers === 1) {
+      const placement = completedPlayers;
       const placementElement = document.createElement("p");
       placementElement.classList.add("placement");
       placementElement.innerHTML = `<b style='color:rgb(241, 232, 60);'>${placement}</b><br>Plads`;
@@ -298,53 +295,52 @@ function checkScored(index, finishOthers = true) {
           },
         ],
       };
-      placementCounter++;
-      console.log("place2", placementCounter);
       historyService.addHistory(gameData).catch((error) => {
         console.error(error);
       });
-      const pointsToAdd = completedPlayers;
-      playerService
-        .updateDailyPoints(players.value[index]._id, pointsToAdd)
-        .then((updatedPlayer) => {
-          // Update the player's dailyPoints in the local players array
-          players.value[index] = updatedPlayer;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-      // Adds how fast the player finished the game to the database according to rounds taken
-      const roundsTaken = round.value;
-      playerService
-        .updateRoundsTaken(players.value[index]._id, roundsTaken)
-        .then((updatedPlayer) => {
-          // Update the player's roundsTaken in the local players array
-          players.value[index] = updatedPlayer;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
     }
+    const pointsToAdd = completedPlayers;
+    playerService
+      .updateDailyPoints(players.value[index]._id, pointsToAdd)
+      .then((updatedPlayer) => {
+        // Update the player's dailyPoints in the local players array
+        players.value[index] = updatedPlayer;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    // Adds how fast the player finished the game to the database according to rounds taken
+    const roundsTaken = round.value;
+    playerService
+      .updateRoundsTaken(players.value[index]._id, roundsTaken)
+      .then((updatedPlayer) => {
+        // Update the player's roundsTaken in the local players array
+        players.value[index] = updatedPlayer;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
     if (finishOthers) {
       // When a player completes the game, finish the remaining players
       // This stops the function when all players have finished
       finishRemainingPlayers(playerDiv);
     }
-  } else {
-    playerDiv.classList.remove("winPlayer");
-  }
-  // Update the dailyPoints displayed in the player table
-}
-/* Swal.fire(
+
+    /* Swal.fire(
       `<img src='${winnerImg}'><p class='winRespond'><b>Tillykke</b><b><br style='margin: .5em;'> ${playerName}!</b><br><br>du tog ${completedPlayers} pladsen<br><br>efter ${round.value} Runde </p>`,
       "",
       ""
     ); */
-/* celebrate();
+    /* celebrate();
     setTimeout(() => {
       celebrate();
     }, "1000"); */
+  } /* else {
+    playerDiv.classList.remove("winPlayer");
+  } */
+  // Update the dailyPoints displayed in the player table
+}
 
 function finishRemainingPlayers(completedPlayerDiv) {
   // Get all players, excluding the completed player
@@ -411,11 +407,7 @@ function finishRemainingPlayersByGroups(playerGroup) {
 
 function finishPlayer(playerDiv) {
   checkAllCheckFieldsForPlayer(playerDiv);
-  // Check if the player already has a placement, if so, return immediately
-  if (playerDiv.querySelector(".placement")) {
-    console.log("place rejected", placementCounter);
-    return;
-  }
+
   // Find the player's index in the players array
   const playerName = playerDiv.querySelector(".playerName").value;
   const playerIndex = players.value.findIndex(
@@ -423,10 +415,10 @@ function finishPlayer(playerDiv) {
   );
 
   // Call checkScored for the player to give them a placement, and set finishOthers to false
-
-  console.log("placeFinish", placementCounter);
+  checkScored(playerIndex, false);
+  completedPlayers++;
   playerDiv.classList.add("winPlayer");
-  const placement = placementCounter;
+  const placement = completedPlayers;
   const placementElement = document.createElement("p");
   placementElement.classList.add("placement");
   placementElement.innerHTML = `<b style='color:rgb(241, 232, 60);'>${placement}</b><br>Plads`;
@@ -443,12 +435,9 @@ function finishPlayer(playerDiv) {
       },
     ],
   };
-  placementCounter++;
-  console.log("placeFinishIncrease", placementCounter);
   historyService.addHistory(gameData).catch((error) => {
     console.error(error);
   });
-    checkScored(playerIndex, false);
 }
 
 // Sets the game number for the game in localStorage().
