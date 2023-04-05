@@ -1,3 +1,16 @@
+<template>
+  <main class="dart-body">
+    <!-- When players are loaded -->
+    <section v-if="loading" class="loading-screen">
+      <h2>Indlæser spil...</h2>
+      <div><img :src="dartLoader" alt="" /></div>
+    </section>
+    <!-- When players are loading -->
+    <numberPanel />
+    <PlayerTable />
+  </main>
+</template>
+
 <script setup lang="ts">
 import dartLoader from "@/assets/img/dartload.gif";
 //Importing sweetalert2
@@ -7,11 +20,11 @@ import { ref, onMounted } from "vue";
 //Importing the router
 import { RouterLink, RouterView } from "vue-router";
 //Panel for the right side of the dartboard with game info
-import rightPanel from "../components/rightPanel.vue";
+import RightPanel from "../components/RightPanel.vue";
 //Panel for numbers to the left of the dartboard
 import numberPanel from "../components/numberPanel.vue";
 //Player table
-import playerTable from "../components/playerTable.vue";
+import PlayerTable from "../components/playerTable.vue";
 //Importing playerService
 import playerService from "@/composables/playersComposable.js";
 
@@ -28,20 +41,6 @@ onMounted(async () => {
   }
 });
 </script>
-
-<template>
-  <main class="dart-body">
-    <!-- When players are loaded -->
-    <section v-if="loading" class="loading-screen">
-      <h2>Indlæser spil...</h2>
-      <div><img :src="dartLoader" alt="" /></div>
-    </section>
-    <!-- When players are loading -->
-    <numberPanel />
-    <playerTable />
-  </main>
-</template>
-
 <style>
 @import "@/assets/css/main.css";
 @import "@/assets/css/loadingScreen.css";
