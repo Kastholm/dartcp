@@ -252,6 +252,7 @@ function closeMenu() {
   document.querySelector(".menu").classList.remove("active");
 }
 
+//Modtager værdier fra parent
 const props = defineProps({
   filteredPlayers: Array,
   activePlayer: Object,
@@ -260,9 +261,10 @@ const props = defineProps({
   gameNumber: Number,
   activePlayerIndex: Number,
 });
-// Export the function for use in other components
+// Videregiver information og funktioner til children
 defineExpose({
-  getGameNumber,
+  getGameNumber: Function,
+  filteredPlayers: Array,
 });
 </script>
 

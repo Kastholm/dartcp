@@ -24,7 +24,7 @@ import RightPanel from "../components/RightPanel.vue";
 //Panel for numbers to the left of the dartboard
 import numberPanel from "../components/numberPanel.vue";
 //Player table
-import PlayerTable from "../components/playerTable.vue";
+import PlayerTable from "../components/PlayerTable.vue";
 //Importing playerService
 import playerService from "@/composables/playersComposable.js";
 

@@ -1,41 +1,16 @@
 <template>
   <section>
-    <div class="playersTable">
-      <!-- Looping through players in playerbase and filtering them by dailyscore -->
-      <div
-        class="player"
-        v-for="(player, index) in filteredPlayers"
-        :key="player._id"
-        :class="{ activePlayer: index === activePlayerIndex }"
-      >
-        <!-- Adding player name to table -->
-        <span class="empty"
-          ><input class="playerName" :value="player.name" />
-        </span>
-        <!-- Adding 11 scoretables with a loop -->
-        <span v-for="boxes in 11" :key="boxes" class="check">
-          <input
-            type="checkbox"
-            ref="checkboxRefs[index][boxes][0]"
-            @change="checkScored(index, boxes)"
-          />
-          <input
-            type="checkbox"
-            ref="checkboxRefs[index][boxes][1]"
-            @change="checkScored(index, boxes)"
-          />
-          <input
-            type="checkbox"
-            ref="checkboxRefs[index][boxes][2]"
-            @change="checkScored(index, boxes)"
-          />
-        </span>
-        <div style="display: grid">
-          <button class="next" @click="nextPlayer(index)">Næste spiller</button>
-          <button class="next checkAll" @click="checkAll()">check all</button>
-        </div>
-      </div>
-    </div>
+    <Players
+      :players="players"
+      :activePlayerIndex="activePlayerIndex"
+      :filteredPlayers="filteredPlayers"
+      :setActivePlayer="setActivePlayer"
+      :updatePlayerPoints="updatePlayerPoints"
+      :round="round"
+      @checkScored="checkScored"
+      @checkAll="checkAll"
+      @startGame="startGame"
+    />
     <!-- RightPanel -->
     <RightPanel
       :filteredPlayers="filteredPlayers"
@@ -49,7 +24,7 @@
 </template>
 
 <script setup>
-/* import { getGameNumber } from "@/components/RightPanel.vue"; */
+import Players from "@/components/Players.vue";
 import RightPanel from "@/components/RightPanel.vue";
 
 import winnerImg from "@/assets/img/trophy.gif";
@@ -60,7 +35,32 @@ import historyService from "@/composables/historyComposable.js";
 // importing playerService from composable
 import playerService from "@/composables/playersComposable.js";
 // importing ref, onMounted, watch, computed from vue
-import { ref, onMounted, watch, computed } from "vue";
+import {
+  ref,
+  onMounted,
+  watch,
+  computed,
+  defineExpose,
+  defineProps,
+  defineEmits,
+} from "vue";
+
+//Modtage
+const props = defineProps({
+  //Modtager fra Players.vue
+  nextPlayer: Function,
+  //Modtager fra RightPanel.vue
+  getGameNumber: Function,
+});
+// Videregiver information og funktioner til children
+defineExpose({
+  filteredPlayers: Array,
+  activePlayerIndex: Number,
+  checkScored: Function,
+  checkAll: Function,
+  players: Array,
+});
+
 // ref players array to store players from the server
 const players = ref([]);
 // Game data that should be added to histry log
@@ -112,7 +112,7 @@ function startGame() {
   round.value = 1;
 }
 // When you click on Next player button, set active player to the next player
-function nextPlayer(index) {
+/* function nextPlayer(index) {
   // Set the active player to the next player
   let nextPlayerIndex = (index + 1) % filteredPlayers.value.length;
   let nextPlayer = filteredPlayers.value[nextPlayerIndex];
@@ -144,7 +144,7 @@ function nextPlayer(index) {
     showConfirmButton: false,
     timer: 2000,
   });
-}
+} */
 // Get the active player from the filteredPlayers array by using the activePlayerIndex value as index number in the array and store it in a computed variable
 const activePlayer = computed(() => {
   if (activePlayerIndex.value !== -1) {
@@ -354,11 +354,6 @@ function finishPlayer(playerDiv) {
   });
 }
 
-// Define the variables and functions to expose
-defineExpose({
-  filteredPlayers,
-});
-
 const getActivePlayerIndex = () => {
   const activePlayerDiv = document.querySelector(".activePlayer");
   const allPlayerDivs = Array.from(document.querySelectorAll(".player"));
@@ -369,11 +364,16 @@ const checkAll = () => {
   const activePlayerDiv = document.querySelector(".activePlayer");
   console.log("activePlayerDiv:", activePlayerDiv);
   if (activePlayerDiv) {
+    console.log("if apd no error");
     const activePlayerIndex = getActivePlayerIndex();
+    console.log("if apd2 no error");
     checkAllCheckFieldsForPlayer(activePlayerDiv);
+    console.log("if apd3 no error");
     checkScored(activePlayerIndex);
+    console.log("if apd4 no error");
     document.querySelector(".activePlayer .checkAll").remove();
     /* nextPlayer(activePlayerIndex); */
+    console.log("checkAll no error");
   } else {
     console.log("No active player found");
   }
@@ -387,51 +387,9 @@ const checkAllCheckFieldsForPlayer = (playerDiv) => {
     checkbox.checked = true;
   });
 };
-
-const props = defineProps({
-  activePlayerIndex: Number,
-});
 </script>
 
 <style>
-.playersTable {
-  display: flex;
-  flex-wrap: wrap;
-}
-.player {
-  height: fit-content;
-}
-.player span {
-  border: 2px solid black;
-  width: fit-content;
-  min-width: 4em;
-  min-height: 1em;
-}
-
-.check {
-  padding: 0.5em 0;
-  min-width: 13.7em !important;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-}
-.player {
-  transition: 0.2s;
-  position: relative;
-  pointer-events: none;
-}
-.player span:nth-child(even) {
-  background-color: #992b2e;
-}
-.player span:nth-child(odd) {
-  background-color: #1aa864;
-}
-.player button {
-  opacity: 0;
-  transition: 0.5s;
-}
-.empty {
-  background-color: #252424 !important;
-}
 .gameInfo {
   padding: 2em 0;
 }
