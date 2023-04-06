@@ -14,8 +14,8 @@ const props = defineProps({
   activePlayerIndex: Number,
   players: Array,
 });
-// Videregiver events til parent
-const emit = defineEmits(["nextPlayer"]);
+// Videregiver events til parent - ikke nødvendigt
+/* const emit = defineEmits(["nextPlayer"]); */
 
 // When you click on Next player button, set active player to the next player
 function nextPlayer(index) {
@@ -43,8 +43,8 @@ function nextPlayer(index) {
   activePlayerIndex.value = nextPlayerIndex;
 
   // Display a success message with the name of the next player
-  //Send information to the other files that the game has started
-  emit("nextPlayer", index);
+  /* //Send information to the other files that the game has started
+  emit("nextPlayer", index); */
 }
 /*  Swal.fire({
     position: "middle",

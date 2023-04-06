@@ -31,7 +31,7 @@
       </span>
       <div style="display: grid">
         <NextButton
-          @nextPlayer="nextPlayer"
+          @click="nextPlayer(index)"
           :players="players"
           :round="round"
           :activePlayerIndex="activePlayerIndex"
@@ -74,7 +74,7 @@ defineExpose({
 const emits = defineEmits({
   checkScored: (index, boxes) => ({ index, boxes }),
   checkAll: () => {},
-  /* nextPlayer: (index) => ({ index }), */
+  nextPlayer: (index) => ({ index }),
 });
 
 function checkScored(index, boxes) {
@@ -86,10 +86,10 @@ function checkAll() {
   // emit the checkAll event to PlayerTable.vue
   emits("checkAll");
 }
-/* function nextPlayer(index) {
+function nextPlayer(index) {
   // emit the checkAll event to PlayerTable.vue
   emits("nextPlayer", index);
-} */
+}
 </script>
 <style>
 .playersTable {
