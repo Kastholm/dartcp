@@ -42,7 +42,6 @@
       :activePlayer="activePlayer"
       :gameStarted="gameStarted"
       :round="round"
-      :gameNumber="gameNumber"
       :activePlayerIndex="activePlayerIndex"
       @startGame="startGame"
     />
@@ -50,6 +49,7 @@
 </template>
 
 <script setup>
+/* import { getGameNumber } from "@/components/RightPanel.vue"; */
 import RightPanel from "@/components/RightPanel.vue";
 
 import winnerImg from "@/assets/img/trophy.gif";
@@ -203,7 +203,7 @@ function checkScored(index, finishOthers = true) {
         name: playerName,
         gameRounds: [
           {
-            gameRound: getGameNumber(), // Retrieve the current game round using getGameNumber()
+            gameRound: $options.getGameNumber(), // Retrieve the current game round using getGameNumber()
             dartRounds: round.value, // Use the 'round' value for dartRounds
             placement: completedPlayers, // Use the 'completedPlayers' value for placement
           },
@@ -343,7 +343,7 @@ function finishPlayer(playerDiv) {
     name: playerName,
     gameRounds: [
       {
-        gameRound: getGameNumber(),
+        gameRound: $options.getGameNumber(),
         dartRounds: round.value,
         placement: completedPlayers,
       },
@@ -353,38 +353,6 @@ function finishPlayer(playerDiv) {
     console.error(error);
   });
 }
-
-// Sets the game number for the game in localStorage().
-const getGameNumber = () => {
-  const gameInfo = JSON.parse(localStorage.getItem("gameInfo"));
-
-  if (gameInfo) {
-    const lastGameTimestamp = new Date(gameInfo.timestamp);
-    const now = new Date();
-    const timeDifference = now - lastGameTimestamp;
-    const oneDay = 24 * 60 * 60 * 1000;
-
-    if (timeDifference > oneDay) {
-      // More than 24 hours have passed, reset the game number
-      setGameNumber(1);
-      return 1;
-    } else {
-      return gameInfo.gameNumber;
-    }
-  } else {
-    // No gameInfo found in localStorage, set initial game number
-    setGameNumber(1);
-    return 1;
-  }
-};
-
-
-
-// Usage:
-const gameNumber = getGameNumber();
-console.log(`Current game number: ${gameNumber}`);
-
-
 
 // Define the variables and functions to expose
 defineExpose({
@@ -484,37 +452,4 @@ const props = defineProps({
 .pointGrid h2 {
   text-align: center;
 }
-
-/* .menu {
-  display: none;
-}
-.active {
-  position: fixed;
-  display: grid;
-  place-content: center;
-  z-index: 99;
-  inset: 0;
-  height: 100vh;
-  width: 100vw;
-  background-color: rgba(0, 0, 0, 0.849);
-}
-.menu button {
-  width: 13em;
-  height: 3em;
-  font-size: 1.8em;
-  padding: 10px;
-  position: relative;
-  border: 2px solid rgb(31, 29, 29);
-  color: #fbfbfb;
-  margin: 1em 0;
-}
-.menu button::after {
-  content: "";
-  position: absolute;
-  bottom: -1em;
-  left: 0;
-  width: 100%;
-  height: 5px;
-  background-color: #e9e2e2;
-} */
 </style>

@@ -105,7 +105,15 @@ import historyService from "@/composables/historyComposable.js";
 // importing playerService from composable
 import playerService from "@/composables/playersComposable.js";
 // importing ref, onMounted, watch, computed from vue
-import { ref, onMounted, watch, computed, defineEmits, defineProps } from "vue";
+import {
+  ref,
+  onMounted,
+  watch,
+  computed,
+  defineEmits,
+  defineProps,
+  defineExpose,
+} from "vue";
 // ref players array to store players from the server
 const players = ref([]);
 // Game data that should be added to history log
@@ -156,6 +164,8 @@ const restartGame = () => {
       }
     });
 };
+
+// Sets the game number for the game in localStorage().
 const getGameNumber = () => {
   const gameInfo = JSON.parse(localStorage.getItem("gameInfo"));
 
@@ -190,6 +200,10 @@ const setGameNumber = (gameNumber) => {
   };
   localStorage.setItem("gameInfo", JSON.stringify(gameInfo));
 };
+
+// Usage:
+const gameNumber = getGameNumber();
+console.log(`Current game number: ${gameNumber}`);
 
 //End Game Function - Updates the yearly points for each player
 const endGame = async () => {
@@ -245,6 +259,10 @@ const props = defineProps({
   round: Number,
   gameNumber: Number,
   activePlayerIndex: Number,
+});
+// Export the function for use in other components
+defineExpose({
+  getGameNumber,
 });
 </script>
 
